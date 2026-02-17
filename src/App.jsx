@@ -476,6 +476,22 @@ const KoreanFlashcards = () => {
     }
   };
 
+  useEffect(() => {
+    localStorage.setItem('knownCards', JSON.stringify([...knownCards]));
+  }, [knownCards]);
+
+  useEffect(() => {
+    localStorage.setItem('learningCards', JSON.stringify([...learningCards]));
+  }, [learningCards]);
+
+  useEffect(() => {
+    localStorage.setItem('srData', JSON.stringify(spacedRepData));
+  }, [spacedRepData]);
+
+  useEffect(() => {
+    localStorage.setItem('streak', streak);
+  }, [streak]);
+
   const allCards = Object.entries(categories).flatMap(([catKey, cat]) => 
     cat.cards.map((card, idx) => ({ ...card, category: catKey, categoryName: cat.name, id: `${catKey}-${idx}` }))
   );
