@@ -5,11 +5,17 @@ const KoreanFlashcards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('greetings');
-  const [knownCards, setKnownCards] = useState(new Set());
-  const [learningCards, setLearningCards] = useState(new Set());
+  const [knownCards, setKnownCards] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('knownCards')) || []); } catch { return new Set(); }
+});  
+  const [learningCards, setLearningCards] = useState(() => {
+  try { return new Set(JSON.parse(localStorage.getItem('learningCards')) || []); } catch { return new Set(); }
+});
   const [shuffled, setShuffled] = useState(false);
   const [cardOrder, setCardOrder] = useState([]);
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(() => {
+  try { return parseInt(localStorage.getItem('streak')) || 0; } catch { return 0; }
+});
   const [totalReviewed, setTotalReviewed] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [showAllCards, setShowAllCards] = useState(false);
@@ -21,7 +27,9 @@ const KoreanFlashcards = () => {
   const [revealAnswer, setRevealAnswer] = useState(false);
   
   // Spaced Repetition State
-  const [spacedRepData, setSpacedRepData] = useState({}); // { cardId: { interval: 1, easeFactor: 2.5, nextReview: Date, repetitions: 0 } }
+  const [spacedRepData, setSpacedRepData] = useState(() => {
+  try { return JSON.parse(localStorage.getItem('srData')) || {}; } catch { return {}; }
+});
   const [spacedQueue, setSpacedQueue] = useState([]);
   const [spacedCurrentIndex, setSpacedCurrentIndex] = useState(0);
   const [spacedShowAnswer, setSpacedShowAnswer] = useState(false);
