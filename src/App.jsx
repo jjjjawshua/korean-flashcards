@@ -4,7 +4,9 @@ import { RotateCcw, ChevronLeft, ChevronRight, Volume2, Star, Shuffle, BookOpen,
 const KoreanFlashcards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('greetings');
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    try { return localStorage.getItem('selectedCategory') || 'greetings'; } catch { return 'greetings'; }
+  });
   const [knownCards, setKnownCards] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('knownCards')) || []); } catch { return new Set(); }
 });  
@@ -16,13 +18,19 @@ const KoreanFlashcards = () => {
   const [streak, setStreak] = useState(() => {
   try { return parseInt(localStorage.getItem('streak')) || 0; } catch { return 0; }
 });
-  const [totalReviewed, setTotalReviewed] = useState(0);
+  const [totalReviewed, setTotalReviewed] = useState(() => {
+    try { return parseInt(localStorage.getItem('totalReviewed')) || 0; } catch { return 0; }
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [showAllCards, setShowAllCards] = useState(false);
-  const [mode, setMode] = useState('flashcard'); // 'flashcard', 'typing', or 'spaced'
+  const [mode, setMode] = useState(() => {
+    try { return localStorage.getItem('mode') || 'flashcard'; } catch { return 'flashcard'; }
+  });
   const [typingInput, setTypingInput] = useState('');
   const [typingResult, setTypingResult] = useState(null); // 'correct', 'incorrect', null
-  const [typingStats, setTypingStats] = useState({ correct: 0, incorrect: 0, attempted: 0 });
+  const [typingStats, setTypingStats] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('typingStats')) || { correct: 0, incorrect: 0, attempted: 0 }; } catch { return { correct: 0, incorrect: 0, attempted: 0 }; }
+  });
   const [showHint, setShowHint] = useState(false);
   const [revealAnswer, setRevealAnswer] = useState(false);
   
@@ -33,7 +41,9 @@ const KoreanFlashcards = () => {
   const [spacedQueue, setSpacedQueue] = useState([]);
   const [spacedCurrentIndex, setSpacedCurrentIndex] = useState(0);
   const [spacedShowAnswer, setSpacedShowAnswer] = useState(false);
-  const [todayReviewed, setTodayReviewed] = useState(0);
+  const [todayReviewed, setTodayReviewed] = useState(() => {
+    try { return parseInt(localStorage.getItem('todayReviewed')) || 0; } catch { return 0; }
+  });
   const [spacedSessionCards, setSpacedSessionCards] = useState([]);
 
   const categories = {
@@ -499,6 +509,26 @@ const KoreanFlashcards = () => {
   useEffect(() => {
     localStorage.setItem('streak', streak);
   }, [streak]);
+
+  useEffect(() => {
+    localStorage.setItem('selectedCategory', selectedCategory);
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    localStorage.setItem('mode', mode);
+  }, [mode]);
+
+  useEffect(() => {
+    localStorage.setItem('totalReviewed', totalReviewed);
+  }, [totalReviewed]);
+
+  useEffect(() => {
+    localStorage.setItem('typingStats', JSON.stringify(typingStats));
+  }, [typingStats]);
+
+  useEffect(() => {
+    localStorage.setItem('todayReviewed', todayReviewed);
+  }, [todayReviewed]);
 
   const allCards = Object.entries(categories).flatMap(([catKey, cat]) => 
     cat.cards.map((card, idx) => ({ ...card, category: catKey, categoryName: cat.name, id: `${catKey}-${idx}` }))
